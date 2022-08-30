@@ -30,6 +30,11 @@ class UserController {
     async delete(request, response) {
         const {id} = request.params
 
+        const checkIfUserExists = await knex("users").where({id}).first()
+
+        if(!checkIfUserExists) {
+            throw new AppError("User id does not exists")
+        }
         await knex("users").where({id}).delete()
 
         return response.json("Delete successful")
