@@ -1,3 +1,4 @@
+const {hash} = require("bcryptjs")
 const AppError = require("../utils/AppError")
 const knex = require("../database/knex")
 
@@ -11,15 +12,19 @@ class UserController {
 
         await knex("users").insert({name, email, password})
 
-        return response.status(201).json({name, email, password})
+        return response.status(201).json("User created successfully")
     }
 
     async show(request, response) {
         const {id} = request.params
 
         const user = await knex("users").where({id}).first()
-
-        return response.json(user)
+        
+        if(!user) {
+            throw new AppError("User not found")
+        }
+        
+        return response.status(201).json(user)
     }
 
     async delete(request, response) {
